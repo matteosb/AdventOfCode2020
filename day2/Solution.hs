@@ -19,22 +19,17 @@ parseLine l =
     parserRegex = "([0-9]+)-([0-9]+) ([a-z]): ([a-z]+)"
     parsed = l =~ parserRegex :: (String, String, String, [String])
 
-isValid :: Password -> Bool
-isValid (Password (Policy mi ma c) str) = mi <= charCount && charCount <= ma
+part1Validator :: Password -> Bool
+part1Validator (Password (Policy mi ma c) str) = mi <= charCount && charCount <= ma
   where
     charCount = count (== c) str
 
-part1 :: [String] -> Int
-part1 = count isValid . map parseLine
-
-part2 :: [String] -> String
-part2 input = "TODO"
+part2Validator :: Password -> Bool
+part2Validator (Password (Policy i1 i2 c) str) = count (== c) [str !! (i1 - 1), str !! (i2 - 1)] == 1
 
 main :: IO ()
 main = do
   input <- readFile "./input.txt"
-  let ls = lines input
-  putStrLn $ "Part 1:\n" <> show (part1 ls)
-
--- putStrLn "---------------------------------------------"
--- putStrLn $ "Part 2:\n" <> part2 input
+  let passwords = map parseLine $ lines input
+  putStrLn $ "Part 1:\n" <> show (count part1Validator passwords)
+  putStrLn $ "Part 2:\n" <> show (count part2Validator passwords)
